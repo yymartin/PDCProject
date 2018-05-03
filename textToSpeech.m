@@ -1,12 +1,10 @@
 function textToSpeech(filename)
  
 %Open .txt file
-fid = fopen(filename,'r');
-A = fscanf(fid,'%s');
-fclose(fid);
+A = fileread(filename);
 
 %Create system command to read file
-sentence = "say "+A;
+sentence = "say -r 100 -v 'Karen' "+A;
 
 %Execute system command
 system(sentence);
