@@ -1,10 +1,15 @@
-function result = getMaxFrequencyFromWav(filename)
+function result = getMaxFrequencyFromWav(filename, minband, maxband, desired)
     [y,Fs] = audioread(filename);
     
     ydft = fft(y,Fs);
-    freq = 0:fs/length(x):Fs/2;
-    ydft = ydft(1:length(x)/2+1);
+    freq = 0:fs/length(ydft):Fs/2;
+    ydft = ydft(minband:maxband);
     
     [~,idx] = max(abs(ydft));
-    result = freq(idx); 
+    max_freq = freq(idx);
+    if max_freq == desired
+        result = true;
+    else 
+        result = false;
+    end
 end
