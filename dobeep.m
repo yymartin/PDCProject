@@ -1,40 +1,36 @@
 %% Function which creates a sound from an ascii string
 
-function dobeep(ascii)
+function dobeep(ascii, sound_time, pause_time)
+    toEmit = [];
     for e = ascii
         if (e == '0')
-            do0()
-            pause(0.5);
+            toEmit = [toEmit do0(sound_time) zeros(1,pause_time*44100)];
         end
 
         if (e == '1')
-            do1()
-            pause(0.5);
+            toEmit = [toEmit do1(sound_time) zeros(1,pause_time*44100)];
         end
-        
     end
 
+    sound(toEmit,44100,16);
 end
 
-%% Function with a beep representing 1 (frequency 18000)
-function do1()
+%% Function with a beep representing 1 (frequency 1800)
+function a = do1(sound_time)
 amp=1; 
 fs=44100;  % sampling frequency
-duration=0.1;
-freq=18000;
-values=0:1/fs:duration;
+freq=1800;
+values=0:1/fs:sound_time;
 a=amp*sin(2*pi* freq*values);
-sound(a);
 end
 
-%% Function with a beep representing 0 (frequency 12000)
+%% Function with a beep representing 0 (frequency 1200)
 
-function do0()
+function a = do0(sound_time)
 amp=1; 
 fs=44100;  % sampling frequency
-duration=0.1;
-freq=12000;
-values=0:1/fs:duration;
+freq=1200;
+values=0:1/fs:sound_time;
 a=amp*sin(2*pi* freq*values);
-sound(a);
 end
+
