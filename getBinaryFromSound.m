@@ -5,13 +5,14 @@ function getBinaryFromSound(filename,sound_time)
         sound_time = 0.1;
     end
     [y,Fs] = audioread(filename);
-
+    y = keepBinary(y,0.1); 
     iter = 1:Fs*sound_time:length(y)-(Fs*sound_time);
     text = '';
     for i = iter
         temp = y(i:i+(Fs*sound_time));
         frequency = detectMaxFreq(temp,Fs);
-            if (~is_silence(temp,0)) 
+        disp(frequency);
+            if (~is_silence(temp,0.1)) 
                 if (abs(1800-frequency) < abs(frequency-1200))
                     text = strcat(text,'1');
                 else 
@@ -21,6 +22,7 @@ function getBinaryFromSound(filename,sound_time)
     end
     disp('Text found: ');
     disp(text);
+    asciiToText(text);
 end
 
 
