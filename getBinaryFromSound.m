@@ -4,25 +4,34 @@ function getBinaryFromSound(filename,sound_time)
         filename = 'sound.wav';
         sound_time = 0.1;
     end
+    
+    M = generate_dictionary();
+    
+    % Read audio file
     [y,Fs] = audioread(filename);
-    y = keepBinary(y,0.1); 
+    
+    % Remove before and after silence
+    y = keepBinary(y,0.03); 
+    
+    % Create an array to iterate over the sound
+    % Typically if sound_time = 0.1, array = [0 0.1 0.2 ...] 
     iter = 1:Fs*sound_time:length(y)-(Fs*sound_time);
     text = '';
     for i = iter
+        % Get sound of length sound_time 
         temp = y(i:i+(Fs*sound_time));
-        frequency = detectMaxFreq(temp,Fs);
-        disp(frequency);
-            if (~is_silence(temp,0.1)) 
-                if (abs(1800-frequency) < abs(frequency-1200))
-                    text = strcat(text,'1');
-                else 
-                    text = strcat(text,'0');
-                end
-            end
+        
+        % Check if temp is silence, retrieve closest frequency using the
+        % dictionary and concatenate the corresponding text
+        if (~is_silence(temp,0.03)) 
+            frequency = detectMaxFreq(temp,Fs);
+            closest = find_closest(frequency);
+            text = strcat(text,M(closest));
+        end
     end
     disp('Text found: ');
     disp(text);
-    asciiToText(text);
+    %asciiToText(text);
 end
 
 
@@ -48,4 +57,37 @@ function silence = is_silence(signal, threshold)
         end
     end
     silence = count_silence > count_noise;
+end
+
+%% Function which find the closest frequency
+function max_freq = find_closest(freq)
+    value = [];
+    for i = 1:32
+        value = [value 1010+i*30];
+    end
+
+    max_freq = 0;
+    min_diff = 10000;
+    for i = value
+        diff = abs(freq-i);
+        if (diff < min_diff)
+            max_freq = i;
+            min_diff = diff;
+        end
+    end
+end
+
+%% Function which generates the receiver dictionary
+function M = generate_dictionary()
+    keys = {}; 
+    for i = 0:31
+        keys = [keys dec2bin(i,5)];
+    end
+
+    value = [];
+    for i = 1:32
+        value = [value 1010+i*30];
+    end
+
+    M = containers.Map(value,keys);
 end
