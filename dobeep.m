@@ -11,18 +11,10 @@ function dobeep(ascii, sound_time, pause_time)
     toEmit = [];
     for e = 1:4:length(ascii)
        % Add to the sound the sinus and zeros corresponding to silence
-       toEmit = [toEmit doSinWithFrequencies(sound_time,M(ascii(e:e+3))) zeros(1,pause_time*44100)];
+       toEmit = [toEmit doSinWithFrequency(sound_time,M(ascii(e:e+3))) zeros(1,pause_time*44100)];
     end
-    %audiowrite('sound.wav',toEmit,44100);
+    audiowrite('sound.wav',toEmit,44100);
     sound(toEmit,44100,16);
-end
-
-%% Function which generate a sin given a frequency and a duration
-function a = doSinWithFrequencies(sound_time,freq1)
-    amp=1; 
-    fs=44100;  % sampling frequency
-    values=0:1/fs:sound_time;
-    a=amp*sin(2*pi*freq1*values);
 end
 
 %% Function which generate the emitter dictionary
