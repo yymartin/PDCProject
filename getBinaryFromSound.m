@@ -1,37 +1,33 @@
 %% Function which recovers a wav file into the corresponding binary
-function getBinaryFromSound(filename,sound_time)
+function getBinaryFromSound(signal,sound_time)
     if(nargin < 2)
-        filename = 'sound.wav';
+        signal = doSinWithFrequency(1,1200);
         sound_time = 0.1;
     end
-        
-    % Read audio file
-    [y,Fs] = audioread(filename);
-    
-    test_sample = y(1:4410);
+     
+    Fs = 44100;
+    test_sample = signal(1:4410);
     energy_1000_2000 = bandpower(test_sample,Fs,[1000 2000]);
     energy_2000_3000 = bandpower(test_sample,Fs,[2000 3000]);
     start_value = 0;
     if energy_1000_2000 < energy_2000_3000
-        y = bandstop(y,[2000 3000], Fs);
+        signal = bandstop(signal,[2000 3000], Fs);
         start_value = 1010;
     else
-        y = bandstop(y,[1000 2000], Fs);
+        signal = bandstop(signal,[1000 2000], Fs);
         start_value = 2010;
     end
     
     M = generate_dictionary(start_value);
     
-    % Remove before and after silence
-    %y = keepBinary(y,-1); 
 
     % Create an array to iterate over the sound
     % Typically if sound_time = 0.1, array = [0 0.1 0.2 ...] 
-    iter = 1:Fs*sound_time:length(y)-(Fs*sound_time);
+    iter = 1:Fs*sound_time:length(signal)-(Fs*sound_time);
     text = '';
     for i = iter
         % Get sound of length sound_time 
-        temp = y(i:i+(Fs*sound_time));
+        temp = signal(i:i+(Fs*sound_time));
         
         % Check if temp is silence, retrieve closest frequency using the
         % dictionary and concatenate the corresponding text

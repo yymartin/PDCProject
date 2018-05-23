@@ -60,7 +60,14 @@ for freq = 1010:60:1070
     assert(abs(max_freq-freq) < 10);
     assert(mod(length(signal),4410) == 0);
 end
-%%
+
+%% Test synchronise
+barker = [doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1750) doSinWithFrequency(0.1,1750) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1750)];
+signal = [whiteNoise(100,200,0.5) barker doSinWithFrequency(0.1,1230) doSinWithFrequency(0.1, 1970) doSinWithFrequency(0.1,1500) doSinWithFrequency(0.1,1250) barker whiteNoise(100,200,0.5)];
+
+subplot(2,1,1); plot(signal);
+subplot(2,1,2); plot(synchronise(signal,barker));
+
 function y = normalNoise(minband, maxband, Time)
     Fs = 44100;
     var = 0.01;
