@@ -4,13 +4,27 @@ function getBinaryFromSound(filename,sound_time)
         filename = 'sound.wav';
         sound_time = 0.1;
     end
-    
-    M = generate_dictionary();
-    
+        
     % Read audio file
     [y,Fs] = audioread(filename);
+    
+    test_sample = y(1:4410);
+    energy_1000_2000 = bandpower(test_sample,Fs,[1000 2000]);
+    energy_2000_3000 = bandpower(test_sample,Fs,[2000 3000]);
+    start_value = 0;
+    if energy_1000_2000 < energy_2000_3000
+        y = bandstop(y,[2000 3000], Fs);
+        start_value = 1010;
+    else
+        y = bandstop(y,[1000 2000], Fs);
+        start_value = 2010;
+    end
+    
+    M = generate_dictionary(start_value);
+    
     % Remove before and after silence
     %y = keepBinary(y,-1); 
+
     % Create an array to iterate over the sound
     % Typically if sound_time = 0.1, array = [0 0.1 0.2 ...] 
     iter = 1:Fs*sound_time:length(y)-(Fs*sound_time);
@@ -22,12 +36,11 @@ function getBinaryFromSound(filename,sound_time)
         % Check if temp is silence, retrieve closest frequency using the
         % dictionary and concatenate the corresponding text
         frequency = detectMaxFreq(temp,Fs);
-        closest = find_closest(frequency);
+        closest = find_closest(frequency,start_value);
         text = strcat(text,M(closest));
         
     end
     disp('Text found: ');
-    disp(text);
     asciiToText(text);
 end
 
@@ -40,27 +53,11 @@ function max_freq = detectMaxFreq(signal,Fs)
     max_freq = freq(idx);
 end
 
-
-
-%% Function which determines if a signal is a beep or a silence regarding a given threshold
-function silence = is_silence(signal, threshold)
-    count_silence = 0;
-    count_noise = 0;
-    for i = 1:length(signal)
-        if(abs(signal(i)) > threshold)
-            count_noise = count_noise + 1;
-        else
-            count_silence = count_silence + 1;
-        end
-    end
-    silence = count_silence > count_noise;
-end
-
 %% Function which find the closest frequency
-function max_freq = find_closest(freq)
+function max_freq = find_closest(freq, start_value)
     value = [];
     for i = 1:16
-        value = [value 1010+i*60];
+        value = [value start_value+i*60];
     end
 
     max_freq = 0;
@@ -75,7 +72,7 @@ function max_freq = find_closest(freq)
 end
 
 %% Function which generates the receiver dictionary
-function M = generate_dictionary()
+function M = generate_dictionary(start_value)
     keys = {}; 
     for i = 0:15
         keys = [keys dec2bin(i,4)];
@@ -83,7 +80,7 @@ function M = generate_dictionary()
 
     value = [];
     for i = 1:16
-        value = [value 1010+i*60];
+        value = [value start_value+i*60];
     end
 
     M = containers.Map(value,keys);

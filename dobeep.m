@@ -6,19 +6,21 @@ function dobeep(ascii, sound_time, pause_time)
         pause_time = 0.2;
     end
     
-    M = generate_dictionary();
+    M1000 = generate_dictionary(1010);
+    M2000 = generate_dictionary(2010);
     
     toEmit = [];
     for e = 1:4:length(ascii)
        % Add to the sound the sinus and zeros corresponding to silence
-       toEmit = [toEmit doSinWithFrequency(sound_time,M(ascii(e:e+3))) zeros(1,pause_time*44100)];
+       s = doSinWithFrequency(sound_time,M1000(ascii(e:e+3)))+doSinWithFrequency(sound_time,M2000(ascii(e:e+3)))+whiteNoise(2000,3000,sound_time);
+       toEmit = [toEmit s zeros(1,pause_time*44100)];
     end
     audiowrite('sound.wav',toEmit,44100);
-    sound(toEmit,44100,16);
+    %sound(toEmit,44100,16);
 end
 
 %% Function which generate the emitter dictionary
-function M = generate_dictionary()
+function M = generate_dictionary(start_value)
     keys = {}; 
     for i = 0:15
         keys = [keys dec2bin(i,4)];
@@ -26,7 +28,7 @@ function M = generate_dictionary()
 
     value = [];
     for i = 1:16
-        value = [value 1010+i*60];
+        value = [value start_value+i*60];
     end
 
     M = containers.Map(keys,value);

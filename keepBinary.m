@@ -1,7 +1,7 @@
 %% Function which delete useless parts of a sound (typically before and after transmission)
 function y = keepBinary(y, threshold)
     % Remove first boom
-    y = y(2000:length(y));
+    %y = y(2000:length(y));
 
     temp = y;
     start_temp = 1;

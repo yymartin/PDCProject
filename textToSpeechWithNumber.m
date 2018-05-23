@@ -3,8 +3,8 @@ function toSend = textToSpeechWithNumber(filename)
     text = fileread(filename);
     toSend = '';
     for i = text
-        decimal = unicode2native(i);
         %convert text to binary
+        decimal = unicode2native(i);
         toSend = strcat(toSend,dec2bin(decimal,8));
     end
     %make corresponding sound
