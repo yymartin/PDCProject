@@ -9,10 +9,8 @@ function getBinaryFromSound(filename,sound_time)
     
     % Read audio file
     [y,Fs] = audioread(filename);
-    
     % Remove before and after silence
-    y = keepBinary(y,0.03); 
-    
+    %y = keepBinary(y,-1); 
     % Create an array to iterate over the sound
     % Typically if sound_time = 0.1, array = [0 0.1 0.2 ...] 
     iter = 1:Fs*sound_time:length(y)-(Fs*sound_time);
@@ -23,15 +21,14 @@ function getBinaryFromSound(filename,sound_time)
         
         % Check if temp is silence, retrieve closest frequency using the
         % dictionary and concatenate the corresponding text
-        if (~is_silence(temp,0.03)) 
-            frequency = detectMaxFreq(temp,Fs);
-            closest = find_closest(frequency);
-            text = strcat(text,M(closest));
-        end
+        frequency = detectMaxFreq(temp,Fs);
+        closest = find_closest(frequency);
+        text = strcat(text,M(closest));
+        
     end
     disp('Text found: ');
     disp(text);
-    %asciiToText(text);
+    asciiToText(text);
 end
 
 
@@ -62,8 +59,8 @@ end
 %% Function which find the closest frequency
 function max_freq = find_closest(freq)
     value = [];
-    for i = 1:32
-        value = [value 1010+i*30];
+    for i = 1:16
+        value = [value 1010+i*60];
     end
 
     max_freq = 0;
@@ -80,13 +77,13 @@ end
 %% Function which generates the receiver dictionary
 function M = generate_dictionary()
     keys = {}; 
-    for i = 0:31
-        keys = [keys dec2bin(i,5)];
+    for i = 0:15
+        keys = [keys dec2bin(i,4)];
     end
 
     value = [];
-    for i = 1:32
-        value = [value 1010+i*30];
+    for i = 1:16
+        value = [value 1010+i*60];
     end
 
     M = containers.Map(value,keys);
