@@ -18,8 +18,8 @@ function dobeep(ascii, sound_time, pause_time)
        toEmit = [toEmit s zeros(1,pause_time*44100)];
     end
     %% Only for testing on single computer
-    toEmit = [whiteNoise(1000,2000,0.2) barker toEmit barker whiteNoise(100,200,0.6)];
-    toEmit = awgn(toEmit,10);
+    toEmit = [whiteNoise(2000,3000,0.2) barker toEmit barker whiteNoise(100,200,0.6)];
+    %toEmit = awgn(toEmit,10);
     audiowrite('sound.wav',toEmit,44100);
     
     
@@ -53,6 +53,6 @@ function a = doCos()
     amp=1; 
     fs=44100;  % sampling frequency
     values=0:1/fs:0.1;
-    a=amp*sin((2*pi*1200*values) + pi) + amp*sin((2*pi*2200*values) + pi);
+    a=amp*sin((2*pi*1700*values)) + amp*sin((2*pi*2700*values));
 end
 
