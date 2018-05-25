@@ -9,8 +9,8 @@ function dobeep(ascii, sound_time, pause_time)
     M1000 = generate_dictionary(1010);
     M2000 = generate_dictionary(2010);
     
-    barker = [doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1750) doSinWithFrequency(0.1,1750) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1750)];
-    
+    %barker = [doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1750) doSinWithFrequency(0.1,1750) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1750)];
+    barker = [doSin() doSin() doSin() doCos() doCos() doSin() doCos()];
     toEmit = [];
     for e = 1:4:length(ascii)
        % Add to the sound the sinus and zeros corresponding to silence
@@ -18,12 +18,12 @@ function dobeep(ascii, sound_time, pause_time)
        toEmit = [toEmit s zeros(1,pause_time*44100)];
     end
     %% Only for testing on single computer
-    %toEmit = [whiteNoise(1000,2000,0.2) barker toEmit barker whiteNoise(100,200,0.6)];
-    %toEmit = awgn(toEmit,10);
-    %audiowrite('sound.wav',toEmit,44100);
+    toEmit = [whiteNoise(1000,2000,0.2) barker toEmit barker whiteNoise(100,200,0.6)];
+    toEmit = awgn(toEmit,10);
+    audiowrite('sound.wav',toEmit,44100);
     
     
-    sound(toEmit,44100,16);
+    %sound(toEmit,44100,16);
 end
 
 %% Function which generate the emitter dictionary
@@ -39,5 +39,20 @@ function M = generate_dictionary(start_value)
     end
 
     M = containers.Map(keys,value);
+end
+
+%%
+function a = doSin()
+    amp=1; 
+    fs=44100;  % sampling frequency
+    values=0:1/fs:0.1;
+    a=amp*sin(2*pi*1200*values) + amp*sin(2*pi*2200*values);
+end
+
+function a = doCos()
+    amp=1; 
+    fs=44100;  % sampling frequency
+    values=0:1/fs:0.1;
+    a=amp*sin((2*pi*1200*values) + pi) + amp*sin((2*pi*2200*values) + pi);
 end
 

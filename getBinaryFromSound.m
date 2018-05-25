@@ -1,25 +1,11 @@
 %% Function which recovers a wav file into the corresponding binary
-function getBinaryFromSound(signal,sound_time)
+function getBinaryFromSound(signal,sound_time,M, start_value)
     if(nargin < 2)
         signal = doSinWithFrequency(1,1200);
         sound_time = 0.1;
     end
-     
+    
     Fs = 44100;
-    test_sample = signal(1:4410);
-    energy_1000_2000 = bandpower(test_sample,Fs,[1000 2000]);
-    energy_2000_3000 = bandpower(test_sample,Fs,[2000 3000]);
-    start_value = 0;
-    if energy_1000_2000 < energy_2000_3000
-        signal = bandstop(signal,[2000 3000], Fs);
-        start_value = 1010;
-    else
-        signal = bandstop(signal,[1000 2000], Fs);
-        start_value = 2010;
-    end
-    
-    M = generate_dictionary(start_value);
-    
 
     % Create an array to iterate over the sound
     % Typically if sound_time = 0.1, array = [0 0.1 0.2 ...] 
@@ -65,19 +51,4 @@ function max_freq = find_closest(freq, start_value)
             min_diff = diff;
         end
     end
-end
-
-%% Function which generates the receiver dictionary
-function M = generate_dictionary(start_value)
-    keys = {}; 
-    for i = 0:15
-        keys = [keys dec2bin(i,4)];
-    end
-
-    value = [];
-    for i = 1:16
-        value = [value start_value+i*60];
-    end
-
-    M = containers.Map(value,keys);
 end
