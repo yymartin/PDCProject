@@ -8,6 +8,7 @@ function toSend = textToSpeechWithNumber(filename)
         toSend = strcat(toSend,dec2bin(decimal,8));
     end
     %make corresponding sound
-    dobeep(toSend,0.1,0);
+    disp(toSend);
+    dobeep(toSend,0.1,0.1);
 end
 
