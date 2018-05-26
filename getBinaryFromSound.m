@@ -9,12 +9,13 @@ function getBinaryFromSound(signal,sound_time,M, start_value)
 
     % Create an array to iterate over the sound
     % Typically if sound_time = 0.1, array = [0 0.1 0.2 ...] 
-    iter = 1:Fs*sound_time:length(signal)-(Fs*sound_time);
+    iter = 1:2*Fs*sound_time:length(signal)-(Fs*sound_time);
     text = '';
+    count = 0;
     for i = iter
         % Get sound of length sound_time 
         temp = signal(i:i+(Fs*sound_time));
-        
+        count = count + 1;
         % Check if temp is silence, retrieve closest frequency using the
         % dictionary and concatenate the corresponding text
         frequency = detectMaxFreq(temp,Fs);
@@ -23,6 +24,7 @@ function getBinaryFromSound(signal,sound_time,M, start_value)
         
     end
     disp('Text found: ');
+    disp(text);
     asciiToText(text);
 end
 
@@ -39,7 +41,7 @@ end
 function max_freq = find_closest(freq, start_value)
     value = [];
     for i = 1:16
-        value = [value start_value+i*60];
+        value = [value start_value+i*48];
     end
 
     max_freq = 0;

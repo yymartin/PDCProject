@@ -1,8 +1,8 @@
 disp('Send text');
-textToSpeechWithNumber('text.txt');
+%textToSpeechWithNumber('text.txt');
 disp('Transmission');
 
-pause(5);
+%pause(5);
 signal = audioread('sound.wav');
 signal = signal(:,1);
 
@@ -25,9 +25,12 @@ M = generate_dictionary(start_value);
 %barker = [doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1750) doSinWithFrequency(0.1,1750) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1750)];
 barker = [doSin() doSin() doSin() doCos() doCos() doSin() doCos()];
 barker2 = [doSin2() doSin2() doSin2() doCos2() doCos2() doSin2() doCos2()];
-figure;plot(signal);
+subplot(2,1,1);plot(signal);
 signal_synchronised = synchronise(signal, barker, barker2);
-figure;plot(signal_synchronised);
+
+%signal_synchronised = keepBinary(signal_synchronised);
+subplot(2,1,2);plot(signal_synchronised);
+
 getBinaryFromSound(signal_synchronised,0.1, M, start_value);
 
 
@@ -36,28 +39,28 @@ function a = doSin()
     amp=1; 
     fs=44100;  % sampling frequency
     values=0:1/fs:0.1;
-    a=amp*sin(2*pi*1200*values) + amp*sin(2*pi*2200*values);
+    a=amp*sin(2*pi*1850*values) + amp*sin(2*pi*2850*values);
 end
 
 function a = doCos()
     amp=1; 
     fs=44100;  % sampling frequency
     values=0:1/fs:0.1;
-    a=amp*sin((2*pi*1700*values)) + amp*sin((2*pi*2700*values));
+    a=amp*sin(2*pi*1850*values + pi) + amp*sin(2*pi*2850*values + pi);
 end
 
 function a = doSin2()
     amp=1; 
     fs=44100;  % sampling frequency
     values=0:1/fs:0.1;
-    a=amp*sin(2*pi*1300*values) + amp*sin(2*pi*2300*values);
+    a=amp*sin(2*pi*1950*values) + amp*sin(2*pi*2950*values);
 end
 
 function a = doCos2()
     amp=1; 
     fs=44100;  % sampling frequency
     values=0:1/fs:0.1;
-    a=amp*sin((2*pi*1800*values)) + amp*sin((2*pi*2800*values));
+    a=amp*sin((2*pi*1950*values) + pi) + amp*sin((2*pi*2950*values)+pi);
 end
 
 %% Function which generates the receiver dictionary
@@ -69,7 +72,7 @@ function M = generate_dictionary(start_value)
 
     value = [];
     for i = 1:16
-        value = [value start_value+i*60];
+        value = [value start_value+i*48];
     end
 
     M = containers.Map(value,keys);
