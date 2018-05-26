@@ -11,6 +11,7 @@ function dobeep(ascii, sound_time, pause_time)
     
     %barker = [doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1750) doSinWithFrequency(0.1,1750) doSinWithFrequency(0.1,1250) doSinWithFrequency(0.1,1750)];
     barker = [doSin() doSin() doSin() doCos() doCos() doSin() doCos()];
+    barker2 = [doSin2() doSin2() doSin2() doCos2() doCos2() doSin2() doCos2()];
     toEmit = [];
     for e = 1:4:length(ascii)
        % Add to the sound the sinus and zeros corresponding to silence
@@ -18,7 +19,7 @@ function dobeep(ascii, sound_time, pause_time)
        toEmit = [toEmit s zeros(1,pause_time*44100)];
     end
     %% Only for testing on single computer
-    toEmit = [whiteNoise(2000,3000,0.2) barker toEmit barker whiteNoise(100,200,0.6)];
+    toEmit = [whiteNoise(2000,3000,0.2) barker toEmit barker2 whiteNoise(100,200,0.6)];
     %toEmit = awgn(toEmit,10);
     audiowrite('sound.wav',toEmit,44100);
     
@@ -54,5 +55,19 @@ function a = doCos()
     fs=44100;  % sampling frequency
     values=0:1/fs:0.1;
     a=amp*sin((2*pi*1700*values)) + amp*sin((2*pi*2700*values));
+end
+
+function a = doSin2()
+    amp=1; 
+    fs=44100;  % sampling frequency
+    values=0:1/fs:0.1;
+    a=amp*sin(2*pi*1300*values) + amp*sin(2*pi*2300*values);
+end
+
+function a = doCos2()
+    amp=1; 
+    fs=44100;  % sampling frequency
+    values=0:1/fs:0.1;
+    a=amp*sin((2*pi*1800*values)) + amp*sin((2*pi*2800*values));
 end
 
