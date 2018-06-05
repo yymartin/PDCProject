@@ -1,5 +1,5 @@
 speechToWav();
-pause(5);
+
 signal = audioread('sound.wav');
 signal = signal(:,1);
 disp(length(signal));
@@ -24,8 +24,6 @@ barker = [doSin() doSin() doSin() doCos() doCos() doSin() doCos()];
 barker2 = [doSin2() doSin2() doSin2() doCos2() doCos2() doSin2() doCos2()];
 subplot(2,1,1);plot(signal);
 signal_synchronised = synchronise(signal, barker, barker2);
-
-subplot(2,1,2);plot(signal_synchronised);
 
 getBinaryFromSound(signal_synchronised,0.1, M, start_value);
 

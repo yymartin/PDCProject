@@ -11,9 +11,11 @@ function getBinaryFromSound(signal,sound_time,M, start_value)
     % Typically if sound_time = 0.1, array = [0 0.1 0.2 ...] 
     iter = 1:2*Fs*sound_time:length(signal)-(Fs*sound_time);
     text = '';
+    count = 0;
     for i = iter
         % Get sound of length sound_time 
         temp = signal(i:i+(Fs*sound_time));
+
         % Check if temp is silence, retrieve closest frequency using the
         % dictionary and concatenate the corresponding text
         frequency = detectMaxFreq(temp,Fs);
@@ -38,8 +40,10 @@ end
 %% Function which find the closest frequency
 function max_freq = find_closest(freq, start_value)
     value = [];
+
     for i = 0:15
         value = [value start_value+i*60];
+
     end
 
     max_freq = 0;
